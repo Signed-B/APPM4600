@@ -9,8 +9,8 @@ def fixedpt(f,x0,tol,Nmax):
     ''' tol = stopping tolerance'''
 
     count = 0
-    while (count <Nmax):
-       count = count +1
+    while (count < Nmax):
+       count = count + 1
        x1 = f(x0)
        if (abs(x1-x0) <tol):
           xstar = x1

@@ -44,3 +44,33 @@ fc = lambda x: x - (x**5 - 7)/(5*(x**4))
 fd = lambda x: x - (x**5 - 7)/12
 
 print('Q3 Frist part')
+print('-- 7**(1/5) =', 7**(1/5))
+print('-- fa(7**(1/5)) =', fa(7**(1/5)))
+print('-- fb(7**(1/5)) =', fb(7**(1/5)))
+print('-- fc(7**(1/5)) =', fc(7**(1/5)))
+print('-- fd(7**(1/5)) =', fd(7**(1/5)))
+
+print('Q3 Second part')
+x0 = 1
+tol = 1e-10
+Nmax = 100
+
+# xstar, ier = fixedpt(fa, x0, tol, Nmax)
+print('-- Q3a: overflow error')
+# xstar, ier = fixedpt(fb, x0, tol, Nmax)
+print('-- Q3b: overflow error')
+xstar, ier = fixedpt(fc, x0, tol, Nmax)
+print('-- Q3c: xstar:', xstar, 'ier:', ier)
+xstar, ier = fixedpt(fd, x0, tol, Nmax)
+print('-- Q3d: xstar:', xstar, 'ier:', ier)
+
+import matplotlib.pyplot as plt
+x = np.linspace(0, 2, 10000)
+# plt.plot(x, fa(x), label='fa')
+# plt.plot(x, fb(x), label='fb')
+# plt.plot(x, fc(x), label='fc')
+plt.plot(x, fd(x), label='fd')
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.legend()
+plt.savefig('lab3_q3_fa.png')
