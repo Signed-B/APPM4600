@@ -65,11 +65,11 @@ xstar, ier = fixedpt(fd, x0, tol, Nmax)
 print('-- Q3d: xstar:', xstar, 'ier:', ier)
 
 import matplotlib.pyplot as plt
-x = np.linspace(0, 2, 10000)
+x = np.linspace(0.5, 2, 100)
 # plt.plot(x, fa(x), label='fa')
 # plt.plot(x, fb(x), label='fb')
 # plt.plot(x, fc(x), label='fc')
-plt.plot(x, fd(x), label='fd')
+# plt.plot(x, fd(x), label='fd')
 plt.xlabel('x')
 plt.ylabel('f(x)')
 plt.legend()
