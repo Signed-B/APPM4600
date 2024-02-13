@@ -27,3 +27,22 @@ def convergence(xstar, p, alpharange=5):
     return None
 
 alpha = convergence(xstar, p)
+
+# Exercises
+
+# q2
+
+def hat(p, tol=1e-10, Nmax=100):
+    phat = []
+    # prevent out of bounds
+    for i in range(len(p)-2):
+        # compute Aitken's delta squared
+        nexthat = p[i] - (p[i+1]-p[i])**2/(p[i+2]-2*p[i+1]+p[i])
+
+        # tolerance check
+        if np.abs(nexthat - phat[-1]) < tol:
+            phat.append(nexthat)
+            return np.array(phat)
+        phat.append(nexthat)
+    return np.array(phat)
+
