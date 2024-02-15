@@ -15,9 +15,9 @@ x0 = 1.5
 print('the approximate fixed point is:',xstar[-1])
 print('found in',len(xstar),'iterations')
 
-def convergence(xstar, p, alpharange=5):
+def convergence(xstar, p, alpharange=2):
     abserror = np.abs(xstar - p)
-    for alpha in range(1,alpharange):
+    for alpha in range(alpharange, 0, -1):
         l = [np.abs(abserror[i+1] / abserror[i]**alpha) for i in range(len(abserror)-1)]
         print('alpha =',alpha,':',l)
         if l[-1] < 1:
@@ -29,6 +29,8 @@ def convergence(xstar, p, alpharange=5):
 alpha = convergence(xstar, p)
 
 # Exercises
+print('======== Exercises ========')
+
 
 # q2
 
@@ -40,9 +42,15 @@ def hat(p, tol=1e-10, Nmax=100):
         nexthat = p[i] - (p[i+1]-p[i])**2/(p[i+2]-2*p[i+1]+p[i])
 
         # tolerance check
-        if np.abs(nexthat - phat[-1]) < tol:
+        if len(phat) > 0 and np.abs(nexthat - phat[-1]) < tol:
             phat.append(nexthat)
             return np.array(phat)
         phat.append(nexthat)
     return np.array(phat)
+
+# q3
+xstarhat = hat(xstar)
+print(xstarhat)
+alpha = convergence(xstarhat, p)
+print('Aitken\'s alpha =',alpha)
 
