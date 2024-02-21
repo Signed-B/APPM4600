@@ -27,11 +27,11 @@ def newton(f,fp,p0,tol,Nmax):
       if (abs(p1-p0) < tol):
           pstar = p1
           info = 0
-          return [p,pstar,info,it]
+          return [pstar,info,it]
       p0 = p1
   pstar = p1
   info = 1
-  return [p,pstar,info,it]
+  return [pstar,info,it]
 
 # define routines
 def newalg(f,dfdx,d2fdx2,a,b,tol,Nmax):
@@ -68,7 +68,7 @@ def newalg(f,dfdx,d2fdx2,a,b,tol,Nmax):
 
     count = 0
     d = 0.5*(a+b)
-    while (abs(d-a)> tol) and abs((f*d2fdx2)/dfdx**2)<1:
+    while (abs(d-a)> tol) and abs((f(d)*d2fdx2(d))/dfdx(d)**2)>=1:
       fd = f(d)
       if (fd ==0):
         astar = d
@@ -83,9 +83,9 @@ def newalg(f,dfdx,d2fdx2,a,b,tol,Nmax):
       count = count +1
 #      print('abs(d-a) = ', abs(d-a))
       
+    print('count = ', count)
     # newton's method
     astar = newton(f,dfdx,d,tol,Nmax)
       
-    astar = d
-    ier = 0
-    return [astar, ier]
+    # astar = d
+    return astar[0], astar[1], astar[2] + count

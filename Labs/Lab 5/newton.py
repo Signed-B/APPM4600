@@ -27,20 +27,21 @@ def newton(f,fp,p0,tol,Nmax):
       if (abs(p1-p0) < tol):
           pstar = p1
           info = 0
-          return [p,pstar,info,it]
+          return [pstar,info,it]
       p0 = p1
   pstar = p1
   info = 1
-  return [p,pstar,info,it]
-        
-# use routine
-f = lambda x: (x-2)**3
-fp = lambda x: 3*(x-2)**2
+  return [pstar,info,it]
 
-p0 = 1.2
-Nmax = 100
-tol = 1.e-14
+if __name__ == "__main__":
+    # use routine
+    f = lambda x: (x-2)**3
+    fp = lambda x: 3*(x-2)**2
 
-p,pstar,info,it = newton(f,fp,p0,tol, Nmax)
-print('the approximate root is', '%16.16e' % pstar)
-print('the error message reads:', '%d' % info)
+    p0 = 1.2
+    Nmax = 100
+    tol = 1.e-14
+
+    p,pstar,info,it = newton(f,fp,p0,tol, Nmax)
+    print('the approximate root is', '%16.16e' % pstar)
+    print('the error message reads:', '%d' % info)
