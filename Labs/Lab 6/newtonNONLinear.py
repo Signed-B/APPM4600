@@ -127,37 +127,38 @@ def Broyden(x0,tol,Nmax):
     return[alpha,ier,its]
 
 
+if __name__ == "__main__":
 
-# use routines
-x0 = np.array([0.1, 0.1, -0.1])
+    # use routines
+    x0 = np.array([0.1, 0.1, -0.1])
 
-Nmax = 100
-tol = 1e-10
+    Nmax = 100
+    tol = 1e-10
 
-t = time.time()
-for j in range(20):
-  [xstar,ier,its] =  Newton(x0,tol,Nmax)
-elapsed = time.time()-t
-print(xstar)
-print('Newton: the error message reads:',ier)
-print('Newton: took this many seconds:',elapsed/20)
-print('Netwon: number of iterations is:',its)
- 
-t = time.time()
-for j in range(20):
-  [xstar,ier,its] =  LazyNewton(x0,tol,Nmax)
-elapsed = time.time()-t
-print(xstar)
-print('Lazy Newton: the error message reads:',ier)
-print('Lazy Newton: took this many seconds:',elapsed/20)
-print('Lazy Newton: number of iterations is:',its)
- 
-t = time.time()
-for j in range(20):
-  [xstar,ier,its] = Broyden(x0, tol,Nmax)     
-elapsed = time.time()-t
-print(xstar)
-print('Broyden: the error message reads:',ier)
-print('Broyden: took this many seconds:',elapsed/20)
-print('Broyden: number of iterations is:',its)
+    t = time.time()
+    for j in range(20):
+        [xstar,ier,its] =  Newton(x0,tol,Nmax)
+    elapsed = time.time()-t
+    print(xstar)
+    print('Newton: the error message reads:',ier)
+    print('Newton: took this many seconds:',elapsed/20)
+    print('Netwon: number of iterations is:',its)
+    
+    t = time.time()
+    for j in range(20):
+        [xstar,ier,its] =  LazyNewton(x0,tol,Nmax)
+    elapsed = time.time()-t
+    print(xstar)
+    print('Lazy Newton: the error message reads:',ier)
+    print('Lazy Newton: took this many seconds:',elapsed/20)
+    print('Lazy Newton: number of iterations is:',its)
+    
+    t = time.time()
+    for j in range(20):
+        [xstar,ier,its] = Broyden(x0, tol,Nmax)     
+    elapsed = time.time()-t
+    print(xstar)
+    print('Broyden: the error message reads:',ier)
+    print('Broyden: took this many seconds:',elapsed/20)
+    print('Broyden: number of iterations is:',its)
      
