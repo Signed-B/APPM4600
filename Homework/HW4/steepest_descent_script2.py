@@ -14,15 +14,23 @@ def driver():
     #First, we define F(x) and its Jacobian. These will help us find q and the
     #Gradient of q.
     def F(x):
-        return np.array([(x[0]-4)**2+2*(x[1]-2)**2-32 , x[1]*(x[0]-2)-16 ]);
+        return np.array([
+            x[0] + np.cos(x[0]*x[1]*x[2]) - 1,
+            np.float_power(1-x[0], .25) + x[1] + 0.05*x[2]**2 - 0.15*x[2] - 1,
+            -x[0]**2 - 0.1*x[1]**2 + 0.01*x[1]+x[2]-1
+        ]);
 
     def JF(x):
-        return np.array([[2*(x[0]-4),4*(x[1]-2)],[x[1],(x[0]-2)]]);
+        return np.array([
+            [1 - x[1]*x[2]*np.sin(x[0]*x[1]*x[2]), -x[0]*x[2]*np.sin(x[0]*x[1]*x[2]), -x[0]*x[1]*np.sin(x[0]*x[1]*x[2])],
+            [-0.25*np.float_power(1-x[0], -0.75), 1, 0.1*x[2]-0.15],
+            [-2*x[0], -0.2*x[1]+0.01, 1]
+        ]);
 
     # Define quadratic function and its gradient based on (F,JF)
     def q(x):
         Fun = F(x);
-        return 0.5*(Fun[0]**2 + Fun[1]**2);
+        return (Fun[0]**2 + Fun[1]**2 + Fun[2]**2)/3.0;
 
     def Gq(x):
         Jfun = JF(x);
@@ -30,99 +38,99 @@ def driver():
         return np.transpose(Jfun)@Ffun;
 
     # Apply steepest descent:
-    x0=np.array([3,3]);
+    x0=np.array([0,0.1,1]);
     tol=1e-12;
     nmax=1000;
-    (r,rn,nf,ng)=steepest_descent(q,Gq,x0,tol,nmax);
+    (r,rn,nf,ng)=steepest_descent(q,Gq,x0,tol,nmax,verb=True);
 
-    ################################################################################
-    # plot of the trajectory of steepest descent against contour map
-    nX=400;nY=400;
-    (X,Y) = np.meshgrid(np.linspace(-2,10,nX),np.linspace(-2,8,nY));
-    xx = X.flatten(); yy=Y.flatten();
-    N = nX*nY;
-    V = np.zeros((nX,nY));
-    for i in np.arange(nX):
-        for j in np.arange(nY):
-            V[i,j]=q(np.array([X[i,j],Y[i,j]]));
+    # ################################################################################
+    # # plot of the trajectory of steepest descent against contour map
+    # nX=400;nY=400;
+    # (X,Y) = np.meshgrid(np.linspace(-2,10,nX),np.linspace(-2,8,nY),np.linspace(-2,8,nY));
+    # xx = X.flatten(); yy=Y.flatten();
+    # N = nX*nY;
+    # V = np.zeros((nX,nY));
+    # for i in np.arange(nX):
+    #     for j in np.arange(nY):
+    #         V[i,j]=q(np.array([X[i,j],Y[i,j]]));
 
-    #levels=np.arange(0,200,1)
-    fig=plt.contour(X,Y,V,levels=np.arange(0,200,1));
+    # #levels=np.arange(0,200,1)
+    # fig=plt.contour(X,Y,V,levels=np.arange(0,200,1));
 
-    plt.plot(rn[:,0],rn[:,1],'k-o');
-    plt.show();
+    # plt.plot(rn[:,0],rn[:,1],'k-o');
+    # plt.show();
 
     ############################################################################
     ################################################################################
-    # Plot of log||Fn|| and of log error
-    Error = np.linalg.norm(np.abs(rn - r),axis=1);
-    plt.plot(np.arange(rn.shape[0]),np.log10(Error),'r-o');
-    plt.show();
-    #input();
+    # # Plot of log||Fn|| and of log error
+    # Error = np.linalg.norm(np.abs(rn - r),axis=1);
+    # plt.plot(np.arange(rn.shape[0]),np.log10(Error),'r-o');
+    # plt.show();
+    # #input();
 
-    Fn = np.zeros(len(rn))
-    for i in np.arange(len(rn)):
-        Fn[i] = q(rn[i]);
+    # Fn = np.zeros(len(rn))
+    # for i in np.arange(len(rn)):
+    #     Fn[i] = q(rn[i]);
 
-    plt.plot(np.arange(rn.shape[0]),np.log10(np.abs(Fn)),'g-o');
-    plt.show();
-    ################################################################################
-    ################################################################################
-    # Minimization example start. This is where you implement f and its gradient, and
-    # use the steepest descent function above to find its minima given x0, tolerance
-    # and max number of iterations nmax.
+    # plt.plot(np.arange(rn.shape[0]),np.log10(np.abs(Fn)),'g-o');
+    # plt.show();
+    # ################################################################################
+    # ################################################################################
+    # # Minimization example start. This is where you implement f and its gradient, and
+    # # use the steepest descent function above to find its minima given x0, tolerance
+    # # and max number of iterations nmax.
 
-    # This example has a unique global minimizer at (1,1), with value equal to 0.
-    # (Rosenbrock banana function)
-    a=1; b=20;
-    # objective function
-    def fun(x):
-        return (a - x[0])**2 + b*(x[1]-x[0]**2)**2;
-    # gradient vector
-    def Gfun(x):
-        G = np.array([-2*(a-x[0])-4*x[0]*b*(x[1]-x[0]**2),2*b*(x[1]-x[0]**2)]);
-        return G;
-    # hessian matrix (2nd derivatives)
-    def Hfun(x):
-        H = np.array([[2-4*b*x[1]+12*b*x[0]**2,-4*b*x[0]],[-4*b*x[0],2*b]]);
-        return H;
+    # # This example has a unique global minimizer at (1,1), with value equal to 0.
+    # # (Rosenbrock banana function)
+    # a=1; b=20;
+    # # objective function
+    # def fun(x):
+    #     return (a - x[0])**2 + b*(x[1]-x[0]**2)**2;
+    # # gradient vector
+    # def Gfun(x):
+    #     G = np.array([-2*(a-x[0])-4*x[0]*b*(x[1]-x[0]**2),2*b*(x[1]-x[0]**2)]);
+    #     return G;
+    # # hessian matrix (2nd derivatives)
+    # def Hfun(x):
+    #     H = np.array([[2-4*b*x[1]+12*b*x[0]**2,-4*b*x[0]],[-4*b*x[0],2*b]]);
+    #     return H;
 
-    ################################################################################
-    # Apply steepest descent to finding the minima given initial conditions and tolerance
-    x0=np.array([-1,-1]);
-    tol=1e-6;
-    nmax=1000;
-    (r,rn,nf,ng)=steepest_descent(fun,Gfun,x0,tol,nmax);
+    # ################################################################################
+    # # Apply steepest descent to finding the minima given initial conditions and tolerance
+    # x0=np.array([-1,-1]);
+    # tol=1e-6;
+    # nmax=1000;
+    # (r,rn,nf,ng)=steepest_descent(fun,Gfun,x0,tol,nmax);
 
-    ################################################################################
-    # plot of the trajectory of steepest descent against contour map
-    nX=200;nY=200;
-    (X,Y) = np.meshgrid(np.linspace(-1,1.5,nX),np.linspace(-1,1.5,nY));
-    xx = X.flatten(); yy=Y.flatten();
-    N = nX*nY;
-    F = np.zeros((nX,nY));
-    for i in np.arange(nX):
-        for j in np.arange(nY):
-            F[i,j]=fun(np.array([X[i,j],Y[i,j]]));
+    # ################################################################################
+    # # plot of the trajectory of steepest descent against contour map
+    # nX=200;nY=200;
+    # (X,Y) = np.meshgrid(np.linspace(-1,1.5,nX),np.linspace(-1,1.5,nY));
+    # xx = X.flatten(); yy=Y.flatten();
+    # N = nX*nY;
+    # F = np.zeros((nX,nY));
+    # for i in np.arange(nX):
+    #     for j in np.arange(nY):
+    #         F[i,j]=fun(np.array([X[i,j],Y[i,j]]));
 
-    fig=plt.contour(X,Y,F,levels=np.arange(0,20,0.25));
+    # fig=plt.contour(X,Y,F,levels=np.arange(0,20,0.25));
 
-    plt.plot(rn[:,0],rn[:,1],'k-o');
-    plt.show();
+    # plt.plot(rn[:,0],rn[:,1],'k-o');
+    # plt.show();
 
-    ################################################################################
-    # Plot of log||Fn|| and of log error
-    Error = np.linalg.norm(np.abs(rn - np.array([1,1])),axis=1);
-    plt.plot(np.arange(rn.shape[0]),np.log10(Error),'r-o');
-    plt.show();
-    #input();
+    # ################################################################################
+    # # Plot of log||Fn|| and of log error
+    # Error = np.linalg.norm(np.abs(rn - np.array([1,1])),axis=1);
+    # plt.plot(np.arange(rn.shape[0]),np.log10(Error),'r-o');
+    # plt.show();
+    # #input();
 
-    Fn = np.zeros(len(rn))
-    for i in np.arange(len(rn)):
-        Fn[i] = fun(rn[i]);
+    # Fn = np.zeros(len(rn))
+    # for i in np.arange(len(rn)):
+    #     Fn[i] = fun(rn[i]);
 
-    plt.plot(np.arange(rn.shape[0]),np.log10(np.abs(Fn)),'g-o');
-    plt.show();
+    # plt.plot(np.arange(rn.shape[0]),np.log10(np.abs(Fn)),'g-o');
+    # plt.show();
 
 ################################################################################
 # Backtracking line-search algorithm (to find an for the step xn + an*pn)
