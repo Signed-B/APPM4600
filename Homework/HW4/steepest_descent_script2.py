@@ -14,23 +14,19 @@ def driver():
     #First, we define F(x) and its Jacobian. These will help us find q and the
     #Gradient of q.
     def F(x):
-        return np.array([
-            x[0] + np.cos(x[0]*x[1]*x[2]) - 1,
-            np.float_power(1-x[0], .25) + x[1] + 0.05*x[2]**2 - 0.15*x[2] - 1,
-            -x[0]**2 - 0.1*x[1]**2 + 0.01*x[1]+x[2]-1
-        ]);
+        return np.array([x[0]+np.cos(x[0]*x[1]*x[2])-1,
+                         ((1-x[0])**(1./4.)) + x[1] + 0.05*x[2]**2-0.15*x[2]-1,
+                         -x[0]**2-0.1*x[1]**2+0.01*x[1] + x[2] - 1]);
 
     def JF(x):
-        return np.array([
-            [1 - x[1]*x[2]*np.sin(x[0]*x[1]*x[2]), -x[0]*x[2]*np.sin(x[0]*x[1]*x[2]), -x[0]*x[1]*np.sin(x[0]*x[1]*x[2])],
-            [-0.25*np.float_power(1-x[0], -0.75), 1, 0.1*x[2]-0.15],
-            [-2*x[0], -0.2*x[1]+0.01, 1]
-        ]);
+        return np.array([[1-x[1]*x[2]*np.sin(x[1]*x[2]*x[0]), x[0]*x[2]*np.sin(x[1]*x[2]*x[0]), x[1]*x[0]*np.sin(x[1]*x[2]*x[0])],
+                         [-.25*((1-x[0])**(-3./4.)), 1, 0.1*x[2]-0.15],
+                         [ -2*x[0], -0.2*x[1] + 0.01, 1]]);
 
     # Define quadratic function and its gradient based on (F,JF)
     def q(x):
         Fun = F(x);
-        return (Fun[0]**2 + Fun[1]**2 + Fun[2]**2)/3.0;
+        return (Fun[0]**2 + Fun[1]**2 + Fun[2]**2)/3;
 
     def Gq(x):
         Jfun = JF(x);
@@ -38,15 +34,22 @@ def driver():
         return np.transpose(Jfun)@Ffun;
 
     # Apply steepest descent:
-    x0=np.array([0,0.1,1]);
-    tol=1e-12;
+    #x0=np.array([0.,2.,1.]);
+    #tol=1e-6;
+    #nmax=1000;
+    #(r,rn,nf,ng)=steepest_descent(q,Gq,x0,tol,nmax);
+    
+    x0=np.array([0.,2.,1.]);
+    tol=5*1e-2;
     nmax=1000;
-    (r,rn,nf,ng)=steepest_descent(q,Gq,x0,tol,nmax,verb=True);
+    (r,rn,nf,ng)=steepest_descent(q,Gq,x0,tol,nmax);
 
-    # ################################################################################
-    # # plot of the trajectory of steepest descent against contour map
+    print(r)
+
+    ################################################################################
+    # plot of the trajectory of steepest descent against contour map
     # nX=400;nY=400;
-    # (X,Y) = np.meshgrid(np.linspace(-2,10,nX),np.linspace(-2,8,nY),np.linspace(-2,8,nY));
+    # (X,Y) = np.meshgrid(np.linspace(-2,10,nX),np.linspace(-2,8,nY));
     # xx = X.flatten(); yy=Y.flatten();
     # N = nX*nY;
     # V = np.zeros((nX,nY));
@@ -62,26 +65,26 @@ def driver():
 
     ############################################################################
     ################################################################################
-    # # Plot of log||Fn|| and of log error
-    # Error = np.linalg.norm(np.abs(rn - r),axis=1);
-    # plt.plot(np.arange(rn.shape[0]),np.log10(Error),'r-o');
-    # plt.show();
-    # #input();
+    #Plot of log||Fn|| and of log error
+    Error = np.linalg.norm(np.abs(rn - r),axis=1);
+    plt.plot(np.arange(rn.shape[0]),np.log10(Error),'r-o');
+    plt.show();
+    #input();
 
-    # Fn = np.zeros(len(rn))
-    # for i in np.arange(len(rn)):
-    #     Fn[i] = q(rn[i]);
+    Fn = np.zeros(len(rn))
+    for i in np.arange(len(rn)):
+        Fn[i] = q(rn[i]);
 
-    # plt.plot(np.arange(rn.shape[0]),np.log10(np.abs(Fn)),'g-o');
-    # plt.show();
-    # ################################################################################
-    # ################################################################################
-    # # Minimization example start. This is where you implement f and its gradient, and
-    # # use the steepest descent function above to find its minima given x0, tolerance
-    # # and max number of iterations nmax.
+    plt.plot(np.arange(rn.shape[0]),np.log10(np.abs(Fn)),'g-o');
+    plt.show();
+    ################################################################################
+    ################################################################################
+    # Minimization example start. This is where you implement f and its gradient, and
+    # use the steepest descent function above to find its minima given x0, tolerance
+    # and max number of iterations nmax.
 
-    # # This example has a unique global minimizer at (1,1), with value equal to 0.
-    # # (Rosenbrock banana function)
+    # This example has a unique global minimizer at (1,1), with value equal to 0.
+    # (Rosenbrock banana function)
     # a=1; b=20;
     # # objective function
     # def fun(x):
@@ -206,6 +209,48 @@ def steepest_descent(f,Gf,x0,tol,nmax,type='swolfe',verb=True):
     r = xn; # approx root is last iterate
 
     return (r,rn,nf,ng);
+
+# Newton method in n dimensions implementation
+def newton_method_nd(f,Jf,x0,tol,nmax,verb=False):
+
+    # Initialize arrays and function value
+    xn = x0; #initial guess
+    rn = x0; #list of iterates
+    Fn = f(xn); #function value vector
+    n=0;
+    nf=1; nJ=0; #function and Jacobian evals
+    npn=1;
+
+    if verb:
+        print("|--n--|----xn----|---|f(xn)|---|");
+
+    while npn>tol and n<=nmax:
+        # compute n x n Jacobian matrix
+        Jn = Jf(xn);
+        nJ+=1;
+
+        if verb:
+            print("|--%d--|%1.7f|%1.7f|" %(n,np.linalg.norm(xn),np.linalg.norm(Fn)));
+
+        # Newton step (we could check whether Jn is close to singular here)
+        pn = -np.linalg.solve(Jn,Fn);
+        xn = xn + pn;
+        npn = np.linalg.norm(pn); #size of Newton step
+
+        n+=1;
+        rn = np.vstack((rn,xn));
+        Fn = f(xn);
+        nf+=1;
+
+    r=xn;
+
+    if verb:
+        if np.linalg.norm(Fn)>tol:
+            print("Newton method failed to converge, n=%d, |F(xn)|=%1.1e\n" % (nmax,np.linalg.norm(Fn)));
+        else:
+            print("Newton method converged, n=%d, |F(xn)|=%1.1e\n" % (n,np.linalg.norm(Fn)));
+
+    return (r,rn,nf,nJ);
 
 ################################################################################
 if __name__ == '__main__':
