@@ -238,5 +238,5 @@ def broyden_method_nd(f,B0,x0,tol,nmax,Bmat='Id',verb=False):
 
     return(r,rn,nf)
 
-# Execute driver
-driver()
+if __name__ == "__main__":
+    driver()
