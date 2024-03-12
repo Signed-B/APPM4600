@@ -68,6 +68,13 @@ def create_natural_spline(yint,xint,N):
 # This is made by filling one row at a time 
     A = np.zeros((N+1,N+1))
 
+    A[0,0] = 1
+    A[N,N] = 1
+    for i in range(1,N-1):
+        A[i,i-1] = 
+        A[i,i] = 
+        A[i,i+1] = 
+
     Ainv = 
     
     M  = 
