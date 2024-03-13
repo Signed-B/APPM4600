@@ -39,9 +39,9 @@ def driver():
     nerr = norm(fex-yeval)
     print('nerr = ', nerr)
     
-    plt.figure()    
-    plt.plot(xeval,fex,'ro-',label='exact function')
-    plt.plot(xeval,yeval,'bs--',label='natural spline') 
+    plt.figure(figsize=(10,15))    
+    plt.plot(xeval,fex,'r-',label='exact function')
+    plt.plot(xeval,yeval,'bo--',label='natural spline', alpha=0.5) 
     plt.legend
     plt.show()
      
