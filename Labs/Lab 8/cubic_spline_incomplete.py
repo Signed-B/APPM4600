@@ -80,6 +80,7 @@ def create_natural_spline(yint,xint,N):
     Ainv = np.linalg.inv(A)
     
     M  = A@b
+    print(M)
 
 #  Create the linear coefficients
     C = np.zeros(N)
