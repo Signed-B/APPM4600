@@ -60,7 +60,7 @@ def create_natural_spline(yint,xint,N):
     for i in range(1,N):
        hi = xint[i]-xint[i-1]
        hip = xint[i+1] - xint[i]
-       b[i] = (yint[i+1]-yint[i])/hip - (yint[i]-yint[i-1])/hi
+       b[i] = (yint[i+1]-yint[i])/hip - (yint[i]-yint[i-1])/hi # TODO where is the 3?
        h[i-1] = hi
        h[i] = hip
 
@@ -70,14 +70,16 @@ def create_natural_spline(yint,xint,N):
 
     A[0,0] = 1
     A[N,N] = 1
-    for i in range(1,N-1):
-        A[i,i-1] = 
-        A[i,i] = 
-        A[i,i+1] = 
+    for i in range(1,N):
+        A[i,i-1] = xint[i]-xint[i-1]
+        A[i,i] = 2*(xint[i+1]-xint[i-1]) # 2*(xint[i]-xint[i-1]+xint[i+1]-xint[i])
+        A[i,i+1] = xint[i+1]-xint[i]
 
-    Ainv = 
+    print(A)
+
+    Ainv = np.linalg.inv(A)
     
-    M  = 
+    M  = A@b
 
 #  Create the linear coefficients
     C = np.zeros(N)
@@ -93,7 +95,7 @@ def eval_local_spline(xeval,xi,xip,Mi,Mip,C,D):
 # Mip = M_{i+1}; Mi = M_i
 
     hi = xip-xi
-    yeval = 
+    yeval = (Mip/(6*hi))*(xeval-xi)**3 + (Mi/(6*hi))*(xip-xeval)**3 + C*(xip-xeval) + D*(xeval-xi) # TODO fix?
     return yeval 
     
     
