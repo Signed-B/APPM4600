@@ -1,3 +1,4 @@
+
 def eval_legendre(n, x):
     if n == 0:
         return [1]
